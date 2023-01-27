@@ -6,17 +6,15 @@
 #    By: mmonclus <mmonclus@student.42urduliz.co    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/23 15:56:00 by mmonclus          #+#    #+#              #
-#    Updated: 2023/01/23 17:42:33 by mmonclus         ###   ########.fr        #
+#    Updated: 2023/01/27 16:24:25 by mmonclus         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	= libftprintf.a
+NAME	= 	libftprintf.a
 
 SRCS	= 	ft_printf.c		\
 			ft_further.c	
 			
-LIB		= libft
-
 OBJS = $(SRCS:%.c=%.o)
 
 CC = gcc
@@ -27,7 +25,6 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 
-	@mv $(LIB)/libft.a $(NAME)
 	@ar -rcs $(NAME) $(OBJS)
 	@echo "Library created"
 	
@@ -35,11 +32,11 @@ $(OBJS): $(SRCS)
 	@$(CC) $(CFLAGS) -c $^
 	
 clean:
-	@rm -rf $(OBJS) $(LIB) clean
+	@rm -rf $(OBJS) clean
 	@echo "Objects removed"
 
 fclean: clean
-	@rm -f $(NAME) $(LIB)
+	@rm -f $(NAME) 
 	@echo "Library removed"
 
 re: fclean all

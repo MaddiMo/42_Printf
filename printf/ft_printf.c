@@ -6,12 +6,17 @@
 /*   By: mmonclus <mmonclus@student.42urduliz.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 11:08:01 by mmonclus          #+#    #+#             */
-/*   Updated: 2023/01/25 15:43:19 by mmonclus         ###   ########.fr       */
+/*   Updated: 2023/01/27 16:18:12 by mmonclus         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_libft.h"
-#include <stdarg.h>
+#include "printf.h"
+
+int	ft_char(char c)
+{
+	write(1, &c, 1);
+	return (1);
+}
 
 int	ft_string(char *str)
 {
@@ -20,63 +25,88 @@ int	ft_string(char *str)
 	len = 0;
 	if (!*str)
 		return (write (1, "(null)", 6));
-	while (*str++)
-		len += ft_char(*str);
+	while (*str)
+	{
+		len = len + ft_char(*str);
+		str++;
+	}
 	return (len);
-}	
-
-int	ft_char(char c)
-{
-	write(1, &c, 1);
-	return (1);
 }
 
-int	ft_which_format(va_list args, char format) // nombre FORMAT porque lo que hemos pasado en *str es qué 
-//formato hemos encontrado despues del %
+int	ft_which_format(va_list arg, char format)
 {
 	int	len;
 
 	len = 0;
 	if (format == 'c')
-		len = ft_char(va_arg(args, char));
+		len = ft_char(va_arg(arg, int));
 	if (format == 's')
-		len = ft_string(va_arg(args, char *));
+		len = ft_string(va_arg(arg, char *));
 	if (format == 'p')
-		len = ft_ptr(va_arg(args, unsigned long));
+		len = ft_string("0x") + ft_hex_num(va_arg(arg, unsigned long), format);
 	if (format == 'd' || format == 'i')
-		len = ft_num(va_arg(args, int), format);
+		len = ft_num(va_arg(arg, int), format);
 	if (format == 'u')
-		len = ft_unsigned_int(va_arg(args, unsigned int));
+		len = ft_unsigned_int(va_arg(arg, unsigned int));
 	if (format == 'x' || format == 'X')
-		len = ft_hex_num(va_arg(args, unsigned long), args);
+		len = ft_hex_num(va_arg(arg, unsigned long), format);
 	if (format == '%')
-		len = ft_percentage();
+		len = ft_char('%');
 	return (len);
 }
 
-int	ft_printf(char const *str, ...)
+int	ft_printf(char const *format, ...)
 {
-	va_list	args; // variable que apunta a los argumentos
-	int		len; // cada función va a devolver el length de lo que ha imprimido
+	va_list	arg;
+	int		len;
 
-	if (!str)
+	if (!format)
 		return (0);
-	va_start(args, str); // inicializar la variable va_list
+	va_start(arg, format);
 	len = 0;
-	while (*str)
+	while (*format)
 	{
-		while (*str != '%')
+		if (*format != '%')
+			len = len + ft_char(*format);
+		if (*format == '%')
 		{
-			str++;
-			len =+ ft_char(args, *str);
+			format++;
+			len = len + ft_which_format(arg, *format);
 		}
-		if (*str == '%') // puntero al character a dónde apunta
-		{
-			str++;
-			len =+ ft_which_format(args, *str);
-		}
-		str++;
+		format++;
 	}
-	va_end(args, str) // finalizar la variable va_list
+	va_end(arg);
 	return (len);
+}
+
+int	main(void)
+{
+	char	 		character = 'G';
+	char 			*string = "Desayuno Tarta";
+	int				d_num = -45399;
+	int				i_num = -455;
+	void			*ptr = "Como helado";
+	unsigned int	hex_cap = 45;
+	unsigned int	hex_low = 45;
+	unsigned int	unsig_int = -896;
+	
+	ft_printf("My Char:\t\t%c\n", character);
+	printf("Original Char:\t\t%c\n\n", character);
+	ft_printf("My String:\t\t%s\n", string);
+	printf("My String:\t\t%s\n\n", string);
+	ft_printf("My Num:\t\t\t%d\n", d_num);
+	printf("Original Num:\t\t%d\n\n", d_num);
+	ft_printf("My Num:\t\t\t%i\n", i_num);
+	printf("Original Num:\t\t%i\n\n", i_num);
+	ft_printf("My Percentage:\t\t%%\n");
+	printf("Original Percentage:\t%%\n\n"); 
+	ft_printf("My Pointer:\t\t%p\n", ptr);
+	printf("Original Pointer:\t%p\n\n", ptr);
+	ft_printf("My CAP Hex: \t\t%X\n", hex_cap);
+	printf("Original CAP Hex: \t%X\n\n", hex_cap);
+	ft_printf("My LOW Hex:\t\t%x\n", hex_low);
+	printf("Original LOW Hex:\t%x\n\n", hex_low);
+	ft_printf("My Unsig Int: \t\t%u\n", unsig_int);
+	printf("Original Unsig Int: \t%u\n", unsig_int);
+	return (0);
 }
