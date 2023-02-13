@@ -6,11 +6,12 @@
 /*   By: mmonclus <mmonclus@student.42urduliz.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 11:08:01 by mmonclus          #+#    #+#             */
-/*   Updated: 2023/01/27 16:18:12 by mmonclus         ###   ########.fr       */
+/*   Updated: 2023/02/13 17:09:37 by mmonclus         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "printf.h"
+#include "ft_printf.h"
+#include <unistd.h>
 
 int	ft_char(char c)
 {
@@ -23,7 +24,7 @@ int	ft_string(char *str)
 	int	len;
 
 	len = 0;
-	if (!*str)
+	if (str == NULL)
 		return (write (1, "(null)", 6));
 	while (*str)
 	{
@@ -43,13 +44,13 @@ int	ft_which_format(va_list arg, char format)
 	if (format == 's')
 		len = ft_string(va_arg(arg, char *));
 	if (format == 'p')
-		len = ft_string("0x") + ft_hex_num(va_arg(arg, unsigned long), format);
+		len = ft_pointer(va_arg(arg, unsigned long));
 	if (format == 'd' || format == 'i')
 		len = ft_num(va_arg(arg, int), format);
 	if (format == 'u')
 		len = ft_unsigned_int(va_arg(arg, unsigned int));
 	if (format == 'x' || format == 'X')
-		len = ft_hex_num(va_arg(arg, unsigned long), format);
+		len = ft_hex_num(va_arg(arg, unsigned int), format);
 	if (format == '%')
 		len = ft_char('%');
 	return (len);
@@ -60,8 +61,6 @@ int	ft_printf(char const *format, ...)
 	va_list	arg;
 	int		len;
 
-	if (!format)
-		return (0);
 	va_start(arg, format);
 	len = 0;
 	while (*format)
@@ -81,19 +80,19 @@ int	ft_printf(char const *format, ...)
 
 int	main(void)
 {
-	char	 		character = 'G';
-	char 			*string = "Desayuno Tarta";
-	int				d_num = -45399;
+	char	 		character = 'f';
+	char 			*string = " %%";
+	int				d_num = -455;
 	int				i_num = -455;
-	void			*ptr = "Como helado";
+	void			*ptr = NULL;
 	unsigned int	hex_cap = 45;
 	unsigned int	hex_low = 45;
-	unsigned int	unsig_int = -896;
-	
+	unsigned int	unsig_int = '3242';
+
 	ft_printf("My Char:\t\t%c\n", character);
 	printf("Original Char:\t\t%c\n\n", character);
 	ft_printf("My String:\t\t%s\n", string);
-	printf("My String:\t\t%s\n\n", string);
+	printf("Original:\t\t%s\n\n", string);
 	ft_printf("My Num:\t\t\t%d\n", d_num);
 	printf("Original Num:\t\t%d\n\n", d_num);
 	ft_printf("My Num:\t\t\t%i\n", i_num);
@@ -106,7 +105,7 @@ int	main(void)
 	printf("Original CAP Hex: \t%X\n\n", hex_cap);
 	ft_printf("My LOW Hex:\t\t%x\n", hex_low);
 	printf("Original LOW Hex:\t%x\n\n", hex_low);
-	ft_printf("My Unsig Int: \t\t%u\n", unsig_int);
-	printf("Original Unsig Int: \t%u\n", unsig_int);
+	ft_printf("My UnSig Int: \t\t%u\n", unsig_int);
+	printf("Original UnSig Int: \t%u\n", unsig_int);
 	return (0);
 }
